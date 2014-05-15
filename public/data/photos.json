@@ -1,0 +1,8 @@
+{
+	"success": true,
+	"tipos": [
+		{ id: 1, src: "http://imagenface.com/imagens/imagenes-de-paisajes-1.jpg" },
+		{ id: 2, src: "http://imagenface.com/imagens/imagenes-de-paisajes-8.jpg" },
+		{ id: 3, src: "http://imagenface.com/imagens/imagenes-de-paisajes-18.jpg" }
+	]
+}
