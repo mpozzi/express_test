@@ -100,17 +100,45 @@ function metodo(){
 	Ext.Ajax.request({
 		method: 'POST'
 	    ,url: '/auth.json',
-	    token: sessionStorage.getItem('token')
-	    ,callback: function(a,b,c){
+	   // token: sessionStorage.getItem('token')
+	    callback: function(a,b,c){
+	    	console.log(a,b,c); 
 	    	if (c.requestId == 1){
 		        var text = c.responseText;
 		        text = Ext.JSON.decode(text);
+		        console.log('text.success',text.success);
+		        var invalid;
 		        if (text.success == false){
+		        	//invalid = true;
 		        	var btn = Ext.ComponentQuery.query('#loginBtn')[0];
 		        	btn.fireEvent('click', btn);
 		        	clear();
-		        }
+		        }else{
+		        	console.log('text.success',text.success);
+		        	art();
+ 		        }
 	    	}
 	    }
+	});
+	art();
+}
+function art(){
+	Ext.Ajax.request({
+		 method: 'GET'
+		,url: '/articles.json'
+		,headers: {'token': sessionStorage.getItem('token')} //sessionStorage.getItem('token')
+		//}]
+		,callback: function(a,b,c){
+			console.log(a,b,c);
+			if (c.requestId == 1){
+				var text = c.responseText;
+				text = Ext.JSON.decode(text);
+				if (Ext.isDefined(text.error)){
+					var btn = Ext.ComponentQuery.query('#loginBtn')[0];
+					btn.fireEvent('click', btn);
+    				clear();				
+				}
+			}	
+		}
 	});
 }

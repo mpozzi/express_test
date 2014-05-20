@@ -18,7 +18,7 @@ Ext.define('AppMor.controller.Login', {
 			'#login #loginUser': {
 				click: this.loginUser
 			}
-			,'#login *[name="user"]': {
+			,'#login *[name="username"]': {
 				specialkey: function(field, e){
 					if (e.getKey() == e.ENTER) {
 						this.loginUser();
@@ -40,6 +40,7 @@ Ext.define('AppMor.controller.Login', {
 		var me = this;
 		Ext.Ajax.request({
 			 url: '/auth.json'
+			,method: 'POST'
 			,params: {
 				 username: me.getUserName().value
 				,password: me.getUserPassword().value
@@ -60,7 +61,7 @@ Ext.define('AppMor.controller.Login', {
 					});
 				} else {
 					sessionStorage.setItem('token','');
-					verif();
+				//	verif();
 					clear();					
 					// Something whent wrong in the connection.
 					Ext.Msg.show({

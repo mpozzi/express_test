@@ -36,7 +36,6 @@ var PHOTOS = [
 var currentToken;
 app.post('/auth.json', function(req, res) {
 
-//  console.log(body.username);
   var body = req.body,
       username = body.username,
       password = body.password;
@@ -60,11 +59,11 @@ app.post('/auth.json', function(req, res) {
 
 
 function validTokenProvided(req, res) {
-
-  return true;
+	console.log( 'req',req );
   // Check POST, GET, and headers for supplied token.
   var userToken = req.body.token || req.param('token') || req.headers.token;
-
+//	res.send(401, { error: req });
+//	return false;
  if (!currentToken || userToken != currentToken) {
     res.send(401, { error: 'Invalid token. You provided: ' + userToken });
     return false;
