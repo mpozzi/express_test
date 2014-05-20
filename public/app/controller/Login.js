@@ -49,8 +49,10 @@ Ext.define('AppMor.controller.Login', {
 			,success: function(result, request) {
 				var json = Ext.decode(result.responseText);
 				if ( json.success ) {
+					sessionStorage['log'];
 					sessionStorage['token'];
 					sessionStorage.setItem('token', json.token);
+					sessionStorage.setItem('log', true);
 					verif();
 					Ext.Msg.show({
 						 title: 'Logueo Correcto'
@@ -61,7 +63,7 @@ Ext.define('AppMor.controller.Login', {
 					});
 				} else {
 					sessionStorage.setItem('token','');
-				//	verif();
+					sessionStorage.setItem('log', false);
 					clear();					
 					// Something whent wrong in the connection.
 					Ext.Msg.show({
@@ -86,14 +88,15 @@ Ext.define('AppMor.controller.Login', {
 	}
 });
 function verif(){
-	var token = sessionStorage.getItem('token');
-	Ext.getStore('Articles').load({
-		params:{token: token}
-	});
-	Ext.getStore('Photos').load({
-		params:{token: token}
-	});
-}
+	Ext.getStore('Articles').getProxy().extraParams = {
+	    token: sessionStorage.getItem('token')
+	};
+	Ext.getStore('Photos').getProxy().extraParams = {
+	    token: sessionStorage.getItem('token')
+	};
+	Ext.getStore('Photos').load();
+	Ext.getStore('Articles').load();
+}	
 function clear(){
 	Ext.getStore('Articles').removeAll();
 	Ext.getStore('Photos').removeAll();

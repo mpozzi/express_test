@@ -26,18 +26,21 @@ Ext.define('AppMor.controller.Main', {
 			,'app-main panel[region="center"]':{
 				afterrender: this.after
 			}
-			,'app-main panel':{
-			//	afterrender: this.afterMain
+			,'app-main':{
+				afterrender: this.afterMain
 			}
 		});
 	}
 	,afterMain: function (){
-		
+		sessionStorage.setItem('log', false);
+		clear();		
+	
 		var btn = Ext.ComponentQuery.query('#loginBtn')[0];
 		console.log(btn);
-		//if (Ext.isDefined(btn)){
-		//	btn.fireEvent('click', btn);
-	//	}
+		if (Ext.isDefined(btn)){
+			btn.fireEvent('click', btn);
+		}
+
  	}
 	,after: function (a,b,c){
 		metodo();
@@ -97,48 +100,69 @@ Ext.define('AppMor.controller.Main', {
 	
 });
 function metodo(){
-	Ext.Ajax.request({
-		method: 'POST'
-	    ,url: '/auth.json',
-	   // token: sessionStorage.getItem('token')
-	    callback: function(a,b,c){
-	    	console.log(a,b,c); 
-	    	if (c.requestId == 1){
-		        var text = c.responseText;
-		        text = Ext.JSON.decode(text);
-		        console.log('text.success',text.success);
-		        var invalid;
-		        if (text.success == false){
-		        	//invalid = true;
-		        	var btn = Ext.ComponentQuery.query('#loginBtn')[0];
-		        	btn.fireEvent('click', btn);
-		        	clear();
-		        }else{
-		        	console.log('text.success',text.success);
-		        	art();
- 		        }
-	    	}
-	    }
-	});
-	art();
-}
-function art(){
-	Ext.Ajax.request({
-		 method: 'GET'
-		,url: '/articles.json'
-		,headers: {'token': sessionStorage.getItem('token')} //sessionStorage.getItem('token')
-		//}]
-		,callback: function(a,b,c){
-			console.log(a,b,c);
-			if (c.requestId == 1){
-				var text = c.responseText;
-				text = Ext.JSON.decode(text);
-				if (Ext.isDefined(text.error)){
-					var btn = Ext.ComponentQuery.query('#loginBtn')[0];
-					btn.fireEvent('click', btn);
-    				clear();				
+	if (sessionStorage.getItem('log') == 'false'  ||  sessionStorage.getItem('log') == null){
+		clear();
+		Ext.Ajax.request({
+			method: 'POST'
+		    ,url: '/auth.json'
+		    ,token: sessionStorage.getItem('token')
+		    ,callback: function(a,b,c){
+		    	console.log(a,b,c); 
+		    	if (c.requestId == 1){
+			        var text = c.responseText;
+			        text = Ext.JSON.decode(text);
+			        console.log('text.success',text.success);
+			        var invalid;
+			        if (text.success == false){
+			        	var btn = Ext.ComponentQuery.query('#loginBtn')[0];
+			        	btn.fireEvent('click', btn);
+			        	clear();
+			        }
+			 	}
+			 }	
+		});
+	}else{
+        	Ext.getStore('Articles').getProxy().extraParams = {
+			    token: sessionStorage.getItem('token')
+			};
+			Ext.getStore('Photos').getProxy().extraParams = {
+			    token: sessionStorage.getItem('token')
+			};
+			Ext.getStore('Photos').load({
+				callback: function (a,b,c){
+					if (Ext.isDefined(b.error)){
+						console.log('ESTA DEFINIDO');
+						var error = b.error.status;
+						if (error == 401){
+							Ext.Msg.show({
+								 title: 'Error'
+								,msg: 'El token no es el correcto.'
+								,closable: false
+								,draggable: false
+								,buttons: Ext.Msg.OK
+							});
+						}
+						clear();
+					}
 				}
-			}	
-		}
-	});
+			});
+			Ext.getStore('Articles').load({
+				callback: function (a,b,c){
+					if (Ext.isDefined(b.error)){
+						console.log('ESTA DEFINIDO');
+						var error = b.error.status;
+						if (error == 401){
+							Ext.Msg.show({
+								 title: 'Error'
+								,msg: 'El token no es el correcto.'
+								,closable: false
+								,draggable: false
+								,buttons: Ext.Msg.OK
+							});
+						}
+						clear();
+					}
+				}
+			});
+        }
 }
