@@ -59,7 +59,6 @@ app.post('/auth.json', function(req, res) {
 
 
 function validTokenProvided(req, res) {
-	console.log( 'req',req );
   // Check POST, GET, and headers for supplied token.
   var userToken = req.body.token || req.param('token') || req.headers.token;
 //	res.send(401, { error: req });
